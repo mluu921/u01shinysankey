@@ -1,18 +1,31 @@
-qol_data <- read_rds('data/processed_full_qol_pro_data.rds')
-
-selected_treatment <- 'Anastrozole'
-selected_symptoms <- 'bladlc'
-selected_timepoints <- c(1, 5)
-selected_initial_response <- 'Moderately'
-
-
-temp <- selected_qol_sankey_data(
-  data = qol_data,
-  selected_treatment = selected_treatment,
-  selected_symptoms = selected_symptoms,
-  selected_timepoints = selected_timepoints,
-  selected_initial_response = selected_initial_response
-)
+# qol_data <- read_rds('data/processed_full_qol_pro_data.rds')
+# 
+# selected_treatment <- 'Anastrozole'
+# selected_symptoms <- 'BLADLC'
+# selected_timepoints <- c(1, 5)
+# selected_initial_response <- 'Moderately'
+# 
+# selected_qol_sankey_data <- function(data, selected_treatment, selected_symptoms, selected_timepoints, selected_initial_response) {
+#   data %>%
+#     filter(trt == selected_treatment) %>%
+#     filter(name == selected_symptoms) %>%
+#     group_by(patientid) %>%
+#     filter(any(
+#       time_point_numeric == selected_timepoints[[1]] &
+#         value == selected_initial_response
+#     )) %>%
+#     ungroup() %>%
+#     filter(time_point_numeric %in% c(selected_timepoints[[1]]:selected_timepoints[[2]]))
+# 
+# }
+# 
+# temp <- selected_qol_sankey_data(
+#   data = qol_data,
+#   selected_treatment = selected_treatment,
+#   selected_symptoms = selected_symptoms,
+#   selected_timepoints = selected_timepoints,
+#   selected_initial_response = selected_initial_response
+# )
 
 
 
@@ -102,6 +115,18 @@ process_data_for_qol_sankey <- function(data) {
     mutate(source_timepoint = factor(source_timepoint, levels = time_point, labels = time_point)) %>%
     arrange(name, source_timepoint)
   
+  # temp <- temp %>%
+  #   mutate(
+  #     across(c(source_response, target_response), ~ case_when(
+  #       .x == 'No response' ~ '0. No response',
+  #       .x == 'Not at all' ~ '1. Not at all',
+  #       .x == 'Slightly' ~ '2. Slightly',
+  #       .x == 'Moderately' ~ '3. Moderately',
+  #       .x == 'Quite a bit' ~ '4. Quite a bit',
+  #       .x == 'Extremely' ~ '5. Extremely'
+  #     ))
+  #   )
+  
   temp <- temp %>%
     mutate(
       source = glue::glue('{source_timepoint} - {source_response}'),
@@ -111,7 +136,9 @@ process_data_for_qol_sankey <- function(data) {
   temp <- temp %>%
     select(
       source, target, n
-    ) %>% as_tbl_graph() %>% igraph_to_networkD3()
+    )
+  
+  temp <- temp %>% as_tbl_graph() %>% igraph_to_networkD3()
   
   temp$nodes <- temp$nodes %>%
     mutate(
@@ -131,8 +158,8 @@ process_data_for_qol_sankey <- function(data) {
 }
 
 # debugonce(process_data_for_qol_sankey)
-
-process_data_for_qol_sankey(temp)
+# 
+# process_data_for_qol_sankey(temp)
 
 
 qolsankeyOutput <- function(id) {

@@ -61,6 +61,58 @@ df <- df %>%
     value = factor(value, levels = c('Not at all', 'Slightly', 'Moderately', 'Quite a bit', 'Extremely'))
   )
 
+
+
+desc <- tibble::tribble(
+      ~name,                                                                   ~description,
+    "HOTFL",                   "Symptom Checklist: Hot Flashes (PRO-CTCAE equivalent item)",
+   "HEADAC",                     "Symptom Checklist: Headaches (PRO-CTCAE equivalent item)",
+   "BLADLC",   "Symptom Checklist: Difficulty with bladder control–when laughing or crying",
+   "BLADOT",            "Symptom Checklist: Difficulty with bladder control-at other times",
+   "VAGDIS",             "Symptom Checklist: Vaginal discharge (PRO-CTCAE equivalent item)",
+   "VAGBLD",  "Symptom Checklist: Vaginal bleeding or spotting (PRO-CTCAE equivalent item)",
+   "GENITC",                                "Symptom Checklist: Genital itching/irritation",
+   "VAGDRY",               "Symptom Checklist: Vaginal dryness (PRO-CTCAE equivalent item)",
+   "PAININ",         "Symptom Checklist: Pain with intercourse (PRO-CTCAE equivalent item)",
+   "PAINBR",                                               "Symptom Checklist: Breast pain",
+    "BRSTS",                               "Symptom Checklist: Difficulty with breast skin",
+    "BRSTT", "Symptom Checklist: Breast sensitivity/tenderness (PRO-CTCAE equivalent item)",
+  "GENACHE",       "Symptom Checklist: General aches and pains (PRO-CTCAE equivalent item)",
+   "JOINTP",                   "Symptom Checklist: Joint pains (PRO-CTCAE equivalent item)",
+    "STIFF",              "Symptom Checklist: Muscle stiffness (PRO-CTCAE equivalent item)",
+   "WTGAIN",                                               "Symptom Checklist: Weight gain",
+   "WTLOSS",                                               "Symptom Checklist: Weight loss",
+   "UNHAPP",                        "Symptom Checklist: Unhappy with appearance of my body",
+   "DECAPP",                                        "Symptom Checklist: Decreased appetite",
+   "FORGET",                 "Symptom Checklist: Forgetfulness (PRO-CTCAE equivalent item)",
+   "EXCITE",                                              "Symptom Checklist: Excitability",
+   "SHORTT",                                              "Symptom Checklist: Short temper",
+     "NAPS",                        "Symptom Checklist: Tendency to take naps; stay in bed",
+  "NIGHTSW",                                              "Symptom Checklist: Night sweats",
+   "COLDSW",                                               "Symptom Checklist: Cold sweats",
+  "DIFFCON",      "Symptom Checklist: Difficulty concentrating (PRO-CTCAE equivalent item)",
+   "EASDIS",                                         "Symptom Checklist: Easily distracted",
+   "TROUSL",                                          "Symptom Checklist: Trouble sleeping",
+   "EAAWAK",                                           "Symptom Checklist: Early awakening",
+   "OTHPRO",                                        "Symptom Checklist: Any other problems"
+  )
+
+
+desc <- desc %>%
+  mutate(
+    description = str_remove(description, 'Symptom Checklist: '),
+    description = str_remove(description, '\\(PRO-CTCAE equivalent item\\)'),
+    description = str_trim(description)
+  )
+
+df <- df %>%
+  mutate(
+    name = str_to_upper(name)
+  ) %>%
+  left_join(desc)
+
+
+
 write_rds(df, 'data/processed_full_qol_pro_data.rds')
 
 

@@ -94,6 +94,10 @@ qol_analysis_server <- function(id, data) {
       selected_treatment(), {
         
         choices <- unique(selected_treatment()$name)
+        
+        desc <- unique(selected_treatment()$description)
+        
+        names(choices) <- desc
           
         updateSelectInput(
           session, 'selected_symptoms', choices = choices
