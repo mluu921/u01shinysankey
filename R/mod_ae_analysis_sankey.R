@@ -132,8 +132,14 @@ ae_analysis_server <- function(id, data) {
     observeEvent(
       selected_treatment(), {
         
+        choices <- unique(selected_treatment()$ae)
+        
+        desc <- unique(selected_treatment()$description)
+        
+        names(choices) <- desc
+        
         updateSelectInput(
-          session, 'selected_ae', choices = unique(selected_treatment()$ae)
+          session, 'selected_ae', choices = choices
         )
         
       }
