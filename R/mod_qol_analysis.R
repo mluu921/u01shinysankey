@@ -93,7 +93,6 @@ qol_analysis_server <- function(id, data) {
     observeEvent(
       selected_treatment(), {
         
-        
         choices <- unique(selected_treatment()$name)
           
         updateSelectInput(
@@ -132,10 +131,15 @@ qol_analysis_server <- function(id, data) {
 
     observeEvent(
       selected_treatment_symptom_timepoint(), {
-        choices <- unique(selected_treatment_symptom_timepoint()$value)
-
+        available_choices <- unique(qol_data$value)[!is.na(unique(qol_data$value))]
+        
+        available_choices <- factor(
+          available_choices,
+          levels = c('Not at all', 'Slightly', 'Moderately', 'Quite a bit', 'Extremely')
+        )
+        
         updateSelectInput(
-          session, 'selected_initial_response', choices = choices[choices != 'NA']
+          session, 'selected_initial_response', choices = available_choices
         )
       }
     )

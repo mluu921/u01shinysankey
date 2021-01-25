@@ -1,18 +1,18 @@
-# qol_data <- read_rds('data/processed_full_qol_pro_data.rds')
-# 
-# selected_treatment <- 'Anastrozole'
-# selected_symptoms <- 'bladlc'
-# selected_timepoints <- c(1, 5)
-# selected_initial_response <- 'Moderately'
-# 
-# 
-# temp <- selected_qol_sankey_data(
-#   data = qol_data,
-#   selected_treatment = selected_treatment,
-#   selected_symptoms = selected_symptoms,
-#   selected_timepoints = selected_timepoints,
-#   selected_initial_response = selected_initial_response
-# )
+qol_data <- read_rds('data/processed_full_qol_pro_data.rds')
+
+selected_treatment <- 'Anastrozole'
+selected_symptoms <- 'bladlc'
+selected_timepoints <- c(1, 5)
+selected_initial_response <- 'Moderately'
+
+
+temp <- selected_qol_sankey_data(
+  data = qol_data,
+  selected_treatment = selected_treatment,
+  selected_symptoms = selected_symptoms,
+  selected_timepoints = selected_timepoints,
+  selected_initial_response = selected_initial_response
+)
 
 
 
@@ -113,13 +113,26 @@ process_data_for_qol_sankey <- function(data) {
       source, target, n
     ) %>% as_tbl_graph() %>% igraph_to_networkD3()
   
+  temp$nodes <- temp$nodes %>%
+    mutate(
+      group = case_when(
+        str_detect(name, 'Not at all') ~ '0',
+        str_detect(name, 'Slightly') ~ '1',
+        str_detect(name, 'Moderately') ~ '2',
+        str_detect(name, 'Quite a bit') ~ '3',
+        str_detect(name, 'Extremely') ~ '4',
+        str_detect(name, 'No response') ~ '5'
+      )
+    )
+  
+  
   return(temp)
   
 }
 
 # debugonce(process_data_for_qol_sankey)
-# 
-# process_data_for_qol_sankey(temp)
+
+process_data_for_qol_sankey(temp)
 
 
 qolsankeyOutput <- function(id) {
@@ -135,6 +148,8 @@ qolsankeyServer <- function(id, data) {
       
     })
     
+    my_color <- 'd3.scaleOrdinal() .domain(["0", "1", "2", "3", "4", "5"]) .range(["#feedde", "#fdbe85" , "#fd8d3c", "#e6550d", "#a63603", "#74c476"])'
+    
     output$sankey_output <- renderSankeyNetwork({
       sankeyNetwork(
         Links = sankey_data()$links,
@@ -143,11 +158,14 @@ qolsankeyServer <- function(id, data) {
         Target = "target",
         Value = "value",
         NodeID = "name",
+        colourScale = my_color,
+        NodeGroup = 'group',
         sinksRight = F,
         nodeWidth = 20,
         units = 'Patients',
         fontSize = 15,
         nodePadding = 25,
+        iterations = 0,
         margin = c(
           'top' = 50,
           'right' = 0,

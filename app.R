@@ -4,11 +4,11 @@ library(tidyverse)
 library(networkD3)
 library(tidygraph)
 library(igraph)
+library(labelled)
 
 options(shiny.autoreload = T)
 
-
-ae_data <- read_rds('data/processed_condensed_data.rds')
+ae_data <- read_rds('data/processed_condensed_data_labelled.rds')
 
 qol_data <- read_rds('data/processed_full_qol_pro_data.rds')
 

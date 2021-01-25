@@ -56,6 +56,11 @@ df <- df %>%
     time_point_numeric, .before = 'time_point'
   )
 
+df <- df %>%
+  mutate(
+    value = factor(value, levels = c('Not at all', 'Slightly', 'Moderately', 'Quite a bit', 'Extremely'))
+  )
+
 write_rds(df, 'data/processed_full_qol_pro_data.rds')
 
 

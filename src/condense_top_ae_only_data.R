@@ -1,4 +1,4 @@
-data <- read_rds(here::here('data/processed_data.rds'))
+data <- read_rds(here::here('data/processed_data_labeled.rds'))
 
 keep_ae <- data %>%
   group_by(
@@ -29,4 +29,11 @@ data <- data %>%
     ae %in% keep_ae
   )
 
-write_rds(data, 'data/processed_condensed_data.rds')
+
+# for(i in seq_along(unique(data$ae))) {
+#   
+#   val_label(data$ae, unique(data$ae)[[i]]) <- unique(data$description)[[i]]
+#   
+# }
+
+write_rds(data, 'data/processed_condensed_data_labelled.rds')
